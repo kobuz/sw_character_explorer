@@ -1,0 +1,12 @@
+{% extends "characters/base.html" %}
+{% block body %}
+<h1>Collections</h1>
+<a href="{% url "fetch-collection" %}">Fetch new collection</a>
+<ul>
+{% for coll in collection_list %}
+    <li>
+        <a href="{% url "collection-detail" coll.id %}">{{ coll }}</a>
+    </li>
+{% endfor %}
+</ul>
+{% endblock %}

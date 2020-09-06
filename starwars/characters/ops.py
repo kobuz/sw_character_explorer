@@ -1,20 +1,18 @@
 from typing import Iterator
 
-import petl
-from petl import datetimeparser
+import petl as etl
 
 
 def transform(characters: Iterator[dict], planets: Iterator[dict]):
     planets_table = (
-        petl.fromdicts(planets)
+        etl.fromdicts(planets)
         .addfield("id", lambda row: row.url.split("/")[-2])
         .rename("name", "planet_name")
         .cut("id", "planet_name")
     )
     characters_table = (
-        petl.fromdicts(characters)
+        etl.fromdicts(characters)
         .addfield("date", lambda row: row.edited.split("T")[0])
-        # .addfield("date", lambda row: dateparser(row.edited).date)
         .convert("homeworld", lambda hw: hw.split("/")[-2])
         .join(planets_table, lkey="homeworld", rkey="id")
         .cutout("homeworld")
@@ -26,13 +24,13 @@ def transform(characters: Iterator[dict], planets: Iterator[dict]):
 
 
 def to_csv(data):
-    output = petl.MemorySource()
-    petl.tocsv(data, output)
+    output = etl.MemorySource()
+    etl.tocsv(data, output)
     return output.getvalue()
 
 
-def main():
-    from starwars.characters import swapi
+def fetch_and_save():
+    from characters import swapi
 
     cli = swapi.Client("https://swapi.dev/api/")
     characters = cli.characters()
@@ -40,7 +38,7 @@ def main():
 
     result = transform(characters, planets)
     csv = to_csv(result)
-    from starwars.characters.models import Collection
+    from characters.models import Collection
 
     coll = Collection.objects.create()
     from django.core.files.base import ContentFile
