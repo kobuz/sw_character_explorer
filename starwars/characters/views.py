@@ -21,3 +21,20 @@ class CollectionList(ListView):
 
 class CollectionDetail(DetailView):
     model = Collection
+
+    def get_context_data(self, **kwargs):
+        context = super(CollectionDetail, self).get_context_data(**kwargs)
+        table = ops.load_table(self.object)
+        limit = int(self.request.GET.get("limit", 10))
+        import petl
+
+        context.update(
+            {
+                "characters": table,
+                "limit": limit,
+                "header": petl.header(table),
+                "data": petl.data(table, limit),
+                "next_limit": limit + 10 if limit < table.len() else None,
+            }
+        )
+        return context

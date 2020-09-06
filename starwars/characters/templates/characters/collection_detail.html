@@ -1,4 +1,13 @@
 {% extends "characters/base.html" %}
 {% block body %}
-{{ collection }}
+<h1>{{ collection }}</h1>
+{{ header }}
+<ol>
+{% for row in data %}
+    <li>{{ row }}</li>
+{% endfor %}
+</ol>
+{% if next_limit %}
+    <a href="{% url "collection-detail" collection.id %}?limit={{ next_limit }}">Load more results</a>
+{% endif %}
 {% endblock %}

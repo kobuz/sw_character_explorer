@@ -44,3 +44,8 @@ def fetch_and_save():
     from django.core.files.base import ContentFile
 
     coll.target_file.save("", ContentFile(csv))
+
+
+def load_table(collection):
+    csv = etl.fromcsv(collection.target_file)
+    return csv
