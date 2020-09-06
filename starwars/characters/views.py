@@ -9,7 +9,7 @@ from characters.models import Collection
 
 class FetchCollection(View):
     def get(self, request):
-        ops.fetch_and_save()
+        Collection.objects.fetch_and_create()
         url = reverse("collections")
         return HttpResponseRedirect(url)
 
@@ -23,18 +23,15 @@ class CollectionDetail(DetailView):
     model = Collection
 
     def get_context_data(self, **kwargs):
-        context = super(CollectionDetail, self).get_context_data(**kwargs)
-        table = ops.load_table(self.object)
+        context = super().get_context_data(**kwargs)
         limit = int(self.request.GET.get("limit", 10))
-        import petl
+        table_data = ops.load_table(self.object, limit)
 
         context.update(
             {
-                "characters": table,
-                "limit": limit,
-                "header": petl.header(table),
-                "data": petl.data(table, limit),
-                "next_limit": limit + 10 if limit < table.len() else None,
+                "header": table_data.header,
+                "data": table_data.data,
+                "next_limit": table_data.next_limit,
             }
         )
         return context

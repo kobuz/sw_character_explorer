@@ -1,9 +1,20 @@
-from typing import Iterator
+from dataclasses import dataclass
+from typing import Iterator, Tuple, Optional
 
 import petl as etl
+from petl import Table
+
+from . import swapi
 
 
-def transform(characters: Iterator[dict], planets: Iterator[dict]):
+@dataclass
+class TableData:
+    header: Tuple[str]
+    data: Table
+    next_limit: Optional[int]
+
+
+def transform(characters: Iterator[dict], planets: Iterator[dict]) -> Table:
     planets_table = (
         etl.fromdicts(planets)
         .addfield("id", lambda row: row.url.split("/")[-2])
@@ -23,29 +34,26 @@ def transform(characters: Iterator[dict], planets: Iterator[dict]):
     return characters_table
 
 
-def to_csv(data):
+def to_csv(data: Table) -> bytes:
     output = etl.MemorySource()
     etl.tocsv(data, output)
     return output.getvalue()
 
 
-def fetch_and_save():
-    from characters import swapi
-
-    cli = swapi.Client("https://swapi.dev/api/")
-    characters = cli.characters()
-    planets = cli.planets()
+def fetch_data_into_csv() -> bytes:
+    client = swapi.make_client()
+    characters = client.characters()
+    planets = client.planets()
 
     result = transform(characters, planets)
     csv = to_csv(result)
-    from characters.models import Collection
-
-    coll = Collection.objects.create()
-    from django.core.files.base import ContentFile
-
-    coll.target_file.save("", ContentFile(csv))
-
-
-def load_table(collection):
-    csv = etl.fromcsv(collection.target_file)
     return csv
+
+
+def load_table(collection, limit) -> TableData:
+    table = etl.fromcsv(collection.target_file)
+    return TableData(
+        header=etl.header(table),
+        data=etl.data(table, limit),
+        next_limit=limit + 10 if limit < table.len() else None,
+    )

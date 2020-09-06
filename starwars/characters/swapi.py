@@ -1,4 +1,7 @@
+from typing import Iterator, Dict
+
 import requests
+from django.conf import settings
 
 
 class Client:
@@ -17,8 +20,12 @@ class Client:
             yield from decoded["results"]
             url = decoded["next"]
 
-    def characters(self):
+    def characters(self) -> Iterator[Dict]:
         yield from self.get_paginated_results("people/")
 
-    def planets(self):
+    def planets(self) -> Iterator[Dict]:
         yield from self.get_paginated_results("planets/")
+
+
+def make_client():
+    return Client(settings.SW_API)
