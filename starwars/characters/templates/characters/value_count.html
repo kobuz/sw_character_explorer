@@ -1,0 +1,25 @@
+{% extends "characters/base.html" %}
+{% block body %}
+<h1>{{ collection }}</h1>
+
+<table>
+<tr>
+    {% for head in header %}
+        <th>
+            {% if head in selected %}
+                <a href="{% url "value-count" collection.id %}?groupby={{ group_by }}&remove={{ head }}">-{{ head }}</a>
+            {% else %}
+                <a href="{% url "value-count" collection.id %}?groupby={{ group_by }}&add={{ head }}">+{{ head }}</a>
+            {% endif %}
+        </th>
+    {% endfor %}
+</tr>
+{{ data }}
+{% for row in data %}
+    <tr>
+    {% for cell in row %}<td>{{ cell }}</td>{% endfor %}
+    </tr>
+{% endfor %}
+</table>
+
+{% endblock %}

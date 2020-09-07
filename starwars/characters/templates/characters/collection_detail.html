@@ -1,12 +1,20 @@
 {% extends "characters/base.html" %}
 {% block body %}
 <h1>{{ collection }}</h1>
-{{ header }}
-<ol>
+
+<table>
+<tr>
+    {% for head in header %}
+        <th><a href="{% url "value-count" collection.id %}?add={{ head }}">+{{ head }}</a></th>
+    {% endfor %}
+</tr>
 {% for row in data %}
-    <li>{{ row }}</li>
+    <tr>
+    {% for cell in row %}<td>{{ cell }}</td>{% endfor %}
+    </tr>
 {% endfor %}
-</ol>
+</table>
+
 {% if next_limit %}
     <a href="{% url "collection-detail" collection.id %}?limit={{ next_limit }}">Load more results</a>
 {% endif %}

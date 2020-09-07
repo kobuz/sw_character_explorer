@@ -50,10 +50,21 @@ def fetch_data_into_csv() -> bytes:
     return csv
 
 
-def load_table(collection, limit) -> TableData:
+def load_table_data(collection, limit) -> TableData:
     table = etl.fromcsv(collection.target_file)
     return TableData(
         header=etl.header(table),
         data=etl.data(table, limit),
         next_limit=limit + 10 if limit < table.len() else None,
+    )
+
+
+def load_grouped_data(collection, fields) -> TableData:
+    table = etl.fromcsv(collection.target_file)
+    if len(fields) == 1:
+        fields = fields[0]
+    return TableData(
+        header=etl.header(table),
+        data=etl.aggregate(table, key=fields, aggregation=len),
+        next_limit=None,
     )
