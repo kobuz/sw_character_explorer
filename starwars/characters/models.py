@@ -1,12 +1,12 @@
 from django.core.files.base import ContentFile
 from django.db import models
 
-from characters import ops
+from characters import data_operations
 
 
 class CollectionManager(models.Manager):
     def fetch_and_create(self):
-        csv = ops.fetch_data_into_csv()
+        csv = data_operations.fetch_data_into_csv()
         collection = Collection.objects.create()
         collection.target_file.save(f"{collection.id}.csv", ContentFile(csv))
         return collection

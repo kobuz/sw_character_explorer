@@ -4,7 +4,7 @@ from typing import Iterator, Tuple, Optional
 import petl as etl
 from petl import Table
 
-from . import swapi
+from external import swapi
 
 
 @dataclass

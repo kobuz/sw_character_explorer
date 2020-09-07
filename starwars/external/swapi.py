@@ -27,5 +27,5 @@ class Client:
         yield from self.get_paginated_results("planets/")
 
 
-def make_client():
+def make_client() -> Client:
     return Client(settings.SW_API)

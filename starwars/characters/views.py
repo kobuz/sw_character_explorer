@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView, DetailView
 
-from characters import ops
+from characters import data_operations
 from characters.models import Collection
 
 
@@ -25,7 +25,7 @@ class CollectionDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         limit = int(self.request.GET.get("limit", 10))
-        table_data = ops.load_table_data(self.object.target_file, limit)
+        table_data = data_operations.load_table_data(self.object.target_file, limit)
 
         context.update(
             {
@@ -73,7 +73,9 @@ class ValueCount(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        table = ops.load_grouped_data(self.object.target_file, self.selected_headers)
+        table = data_operations.load_grouped_data(
+            self.object.target_file, self.selected_headers
+        )
         context.update(
             {
                 "group_by": self.request.GET.get("groupby", ""),
