@@ -8,7 +8,7 @@ class CollectionManager(models.Manager):
     def fetch_and_create(self):
         csv = ops.fetch_data_into_csv()
         collection = Collection.objects.create()
-        collection.target_file.save("", ContentFile(csv))
+        collection.target_file.save(f"{collection.id}.csv", ContentFile(csv))
         return collection
 
 
@@ -19,4 +19,4 @@ class Collection(models.Model):
     objects = CollectionManager()
 
     def __str__(self):
-        return self.created.isoformat()
+        return self.created.strftime("%Y-%m-%d %H:%M")
