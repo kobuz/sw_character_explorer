@@ -25,7 +25,7 @@ SECRET_KEY = "yl999kb86#rvxqneqxw_t%=3p+hlu*e!3(mrp%(gv0tcywl$!0"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["0.0.0.0"]
 
 INTERNAL_IPS = ["127.0.0.1"]
 
@@ -80,8 +80,12 @@ WSGI_APPLICATION = "starwars.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "postgres",
+        "USER": "postgres",
+        "PASSWORD": "postgres",
+        "HOST": "db",
+        "PORT": 5432,
     }
 }
 
@@ -127,4 +131,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
+# SW API
 SW_API = "https://swapi.dev/api/"

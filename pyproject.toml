@@ -11,6 +11,7 @@ petl = "^1.6.4"
 requests = "^2.24.0"
 django-extensions = "^3.0.8"
 django-debug-toolbar = "^2.2"
+psycopg2-binary = "^2.8.6"
 
 [tool.poetry.dev-dependencies]
 
